@@ -11,25 +11,13 @@
       # Start influxDB install
       - name: Add InfluxDB repo
         copy: src=influxdb.repo dest=/etc/yum.repos.d/influxdb.repo owner=root group=root mode=0644
-      - name: Install requires packages for influxdb tic tac
+      - name: Install required packages for influxdb tic tac
         yum: name={{ item }} enablerepo=influxdb state=present
         with_items:
           - influxdb
           - kapacitor
           - telegraf
           - chronograf
-
-      # - name: Install InfluxDB
-      #   yum: name=influxdb enablerepo=influxdb state=present
-      #
-      # - name: Install kapacitor
-      #   yum: name=kapacitor enablerepo=influxdb state=present
-      #
-      # - name: Install telegraf
-      #   yum: name=telegraf enablerepo=influxdb state=present
-      #
-      # - name: Install chronograf
-      #   yum: name=chronograf enablerepo=influxdb state=present
 
       - name: Copy chronograf configuration file. Required for port forwarding
         copy: src=config.toml dest=/opt/chronograf/config.toml owner=root group=root mode=0644
