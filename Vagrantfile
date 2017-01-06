@@ -9,9 +9,7 @@ Vagrant.configure(2) do |config|
 
     # Configuration private networking
     influx.vm.network "private_network", ip: '10.0.0.10'
-    # Configure port forwarding - visit port 8080 to use port 80 on VM
-    influx.vm.network "forwarded_port", guest: 8083, host: 8080
-    influx.vm.network "forwarded_port", guest: 8086, host: 8090
+    influx.vm.network "forwarded_port", guest: 8888, host: 8080
 
     # Set memory
     influx.vm.provider "virtualbox" do |vb|
@@ -20,8 +18,8 @@ Vagrant.configure(2) do |config|
 
     # Run ansible playbook
     influx.vm.provision "ansible" do |ansible|
-      ansible.playbook = "ansible/kub-master.yml"
+      ansible.playbook = "ansible/install-influxdb.yml"
     end
   end
-  # End master VM configuration
+  # End influxdb VM configuration
 end

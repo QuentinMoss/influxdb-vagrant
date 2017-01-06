@@ -1,0 +1,65 @@
+# Hello HL people. This should *ONLY* be used with Vagrant deployments and testing.
+---
+  - hosts: all
+    become: yes
+    tasks:
+
+      # Install vim to keep sanity
+      - name: Install vim
+        yum: name=vim state=present
+
+      # Start influxDB install
+      - name: Add InfluxDB repo
+        copy: src=influxdb.repo dest=/etc/yum.repos.d/influxdb.repo owner=root group=root mode=0644
+      - name: Install requires packages for influxdb tic tac
+        yum: name={{ item }} enablerepo=influxdb state=present
+        with_items:
+          - influxdb
+          - kapacitor
+          - telegraf
+          - chronograf
+
+      # - name: Install InfluxDB
+      #   yum: name=influxdb enablerepo=influxdb state=present
+      #
+      # - name: Install kapacitor
+      #   yum: name=kapacitor enablerepo=influxdb state=present
+      #
+      # - name: Install telegraf
+      #   yum: name=telegraf enablerepo=influxdb state=present
+      #
+      # - name: Install chronograf
+      #   yum: name=chronograf enablerepo=influxdb state=present
+
+      - name: Copy chronograf configuration file. Required for port forwarding
+        copy: src=config.toml dest=/opt/chronograf/config.toml owner=root group=root mode=0644
+
+      - name: copy over chronograf systemd unit file
+        copy: src=chronograf.service dest=/usr/lib/systemd/system/chronograf.service owner=root group=root mode=0644
+
+      # not using ansible 2.2 so we will run this as shell command
+      - name: reload system to pick up unit file change
+        shell: systemctl daemon-reload
+
+      - name: Start influx db tic tac
+        service: name={{ item }} state=started
+        with_items:
+          - influxdb
+          - telegraf
+          - kapacitor
+          - chronograf
+
+      # - name: start InfluxDB
+      #   service: name=influxdb state=started
+      #
+      # - name: start telegraf
+      #   service: name=telegraf state=started
+      #
+      # - name: start chronograf
+      #   service: name=chronograf state=started
+      #
+      # - name: start kapacitor
+      #   service: name=kapacitor state=started
+
+      - name: Enable influx and all deps to start on reboot
+        shell: systemctl enable influxdb kapacitor telegraf chronograf

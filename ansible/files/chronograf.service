@@ -1,0 +1,14 @@
+# Yes, i will fix this later
+# Yes i did put it directly in /usr/lib/systemd/system because WHY WOULDNT THE PACKAGE ALREADY DO IT
+[Unit]
+Description=Chronograf
+After=network.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/chronograf.pid
+ExecStart=/opt/chronograf/chronograf -config /opt/chronograf/config.toml
+
+[Install]
+WantedBy=multi-user.target
+Alias=chronograf.service
