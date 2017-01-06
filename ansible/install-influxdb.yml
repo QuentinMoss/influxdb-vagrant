@@ -11,23 +11,16 @@
       # Start influxDB install
       - name: Add InfluxDB repo
         copy: src=influxdb.repo dest=/etc/yum.repos.d/influxdb.repo owner=root group=root mode=0644
+
       - name: Install required packages for influxdb tic tac
         yum: name={{ item }} enablerepo=influxdb state=present
         with_items:
           - influxdb
           - kapacitor
           - telegraf
-          - chronograf
 
-      - name: Copy chronograf configuration file. Required for port forwarding
-        copy: src=config.toml dest=/opt/chronograf/config.toml owner=root group=root mode=0644
-
-      - name: copy over chronograf systemd unit file
-        copy: src=chronograf.service dest=/usr/lib/systemd/system/chronograf.service owner=root group=root mode=0644
-
-      # not using ansible 2.2 so we will run this as shell command
-      - name: reload system to pick up unit file change
-        shell: systemctl daemon-reload
+      - name: Download and install chronograf
+        yum: name=https://dl.influxdata.com/chronograf/releases/chronograf-1.1.0~beta4.x86_64.rpm state=present
 
       - name: Start influx db tic tac
         service: name={{ item }} state=started
