@@ -1,5 +1,4 @@
 Vagrant.configure(2) do |config|
-
   # Start influxdb VM configuration
   config.vm.define "influxdb", autostart: true, primary: true do |influx|
     influx.vm.box = "bento/centos-7.2"
@@ -9,7 +8,8 @@ Vagrant.configure(2) do |config|
 
     # Configuration private networking
     influx.vm.network "private_network", ip: '10.0.0.10'
-    influx.vm.network "forwarded_port", guest: 8888, host: 8080
+    influx.vm.network "forwarded_port", guest: 8888, host: 8081
+    influx.vm.network "forwarded_port", guest: 3000, host: 8080
 
     # Set memory
     influx.vm.provider "virtualbox" do |vb|
