@@ -20,7 +20,7 @@
           - telegraf
 
       - name: Download and install chronograf
-        yum: name=https://dl.influxdata.com/chronograf/releases/chronograf-1.1.0~beta4.x86_64.rpm state=present
+        yum: name=https://dl.influxdata.com/chronograf/releases/chronograf-1.1.0~beta5.x86_64.rpm state=present
 
       - name: Start influx db tic tac
         service: name={{ item }} state=started
@@ -29,18 +29,6 @@
           - telegraf
           - kapacitor
           - chronograf
-
-      # - name: start InfluxDB
-      #   service: name=influxdb state=started
-      #
-      # - name: start telegraf
-      #   service: name=telegraf state=started
-      #
-      # - name: start chronograf
-      #   service: name=chronograf state=started
-      #
-      # - name: start kapacitor
-      #   service: name=kapacitor state=started
 
       - name: Enable influx and all deps to start on reboot
         shell: systemctl enable influxdb kapacitor telegraf chronograf
